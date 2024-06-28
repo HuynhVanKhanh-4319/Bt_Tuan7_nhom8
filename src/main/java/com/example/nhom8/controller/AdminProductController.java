@@ -29,14 +29,14 @@ public class AdminProductController {
     @GetMapping("")
     public String index(Model model)
     {
-        model.addAttribute("listproduct", productService.GetAll());
-        return "admin/products/index.html";
+        model.addAttribute("product", productService.getAllProducts());
+        return "admin/products/index";
     }
     @GetMapping("/create")
     public String create(Model model)
     {
         model.addAttribute("product", new Product());
-        model.addAttribute("listCategory", categoryService.GetAll() );
+        model.addAttribute("Category", categoryService.getAllTheloai() );
         return "admin/products/create";
     }
     @PostMapping("/create")
@@ -47,13 +47,13 @@ public class AdminProductController {
         if (result.hasErrors())
         {
             model.addAttribute("product", newProduct);
-            model.addAttribute("listCategory", categoryService.GetAll() );
+            model.addAttribute("Category", categoryService.getAllTheloai() );
             return "admin/products/create";
         }
         if(imageProduct != null && imageProduct.getSize() > 0)
         {
             try {
-                File saveFile = new ClassPathResource("static/images").getFile();
+                File saveFile = new ClassPathResource("static/image").getFile();
                 String newImageFile = UUID.randomUUID() + ".png";
                 Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + newImageFile);
                 Files.copy(imageProduct.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
@@ -62,25 +62,25 @@ public class AdminProductController {
                 e.printStackTrace();
             }
         }
-        productService.add(newProduct);
+        productService.addProduct(newProduct);
         return "redirect:/admin/products";
     }
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable int id, Model model)
+    public String editproduct(@PathVariable Long id, Model model)
     {
-        model.addAttribute("product", productService.get(id));
-        model.addAttribute("listCategory", categoryService.GetAll() );
+        Product product = productService.getProductById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
+        model.addAttribute("product", productService.getProductById(id));
+        model.addAttribute("Category", categoryService.getAllTheloai() );
         return "admin/products/edit";
     }
-    @PostMapping("/edit")
-    public String edit(@Valid Product editProduct,
+    @PostMapping("/update/{id}")
+    public String edit(@Valid Product product,
                        @RequestParam MultipartFile imageProduct,
-                       BindingResult result,
-                       Model model)
+                       BindingResult result, @PathVariable Long id)
     {
         if (result.hasErrors()) {
-            model.addAttribute("product", editProduct);
-            model.addAttribute("listCategory", categoryService.GetAll() );
+            product.setId(id);
             return "admin/products/edit";
         }
         if(imageProduct != null && imageProduct.getSize() > 0)
@@ -88,14 +88,19 @@ public class AdminProductController {
             try {
                 File saveFile = new ClassPathResource("static/images").getFile();
                 Path path = Paths.get(saveFile.getAbsolutePath() + File.separator +
-                        editProduct.getImage());
+                        product.getImage());
                 Files.copy(imageProduct.getInputStream(), path,
                         StandardCopyOption.REPLACE_EXISTING);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        productService.edit(editProduct);
+        productService.updateProduct(product);
+        return "redirect:/admin/products";
+    }
+    @GetMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable Long id) {
+        productService.deleteProductById(id);
         return "redirect:/admin/products";
     }
 }
