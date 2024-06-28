@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="_layout"
+      layout:decorate="~{_layout}"
       xmlns:custom="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
@@ -22,12 +22,12 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="product : ${listproduct}" >
+        <tr th:each="product : ${product}" >
             <th scope="row" th:text="${product.id}"></th>
             <td th:text="${product.name}"></td>
             <!-- <td th:text="${product.image}"></td> -->
             <td>
-                <img height="120" width="150" th:src="@{/images/} + ${product.image}"/>
+                <img height="120" width="150" th:src="${product.image}"/>
             </td>
             <td th:text="${product.price}"></td>
             <td th:text="${product.category.name}"></td>

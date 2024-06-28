@@ -4,7 +4,6 @@ import com.example.nhom8.entity.Category;
 import com.example.nhom8.repository.CategoryRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,33 +16,28 @@ import java.util.Optional;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public List<Category> GetAll() {
+    public List<Category> getAllTheloai() {
         return categoryRepository.findAll();
     }
 
-    public Optional<Category> get(int id) {
+    public Optional<Category> getTheloaiById(Long id) {
         return categoryRepository.findById(id);
     }
-    /**
-     * Add a new category to the database.
-     * @param category the category to add
-     */
-    public void addCategory(Category category) {
-        categoryRepository.save(category);
+
+    public void addTheloai(Category theLoai) {
+        categoryRepository.save(theLoai);
     }
-    /**
-     * Update an existing category.
-     * @param category the category with updated information
-     */
-    public void updateCategory(@NotNull Category category) {
-        Category existingCategory = categoryRepository.findById(category.getId())
-                .orElseThrow(() -> new IllegalStateException("Category with ID " + category.getId() + " does not exist."));
-        existingCategory.setName(category.getName());
-        categoryRepository.save(existingCategory);
+
+    public void updateTheloai(@NotNull Category theLoai) {
+        Category Theloai = categoryRepository.findById(theLoai.getId())
+                .orElseThrow(() -> new IllegalStateException("Category with ID " +
+                        theLoai.getId() + " does not exist."));
+        Theloai.setName(theLoai.getName());
+        categoryRepository.save(Theloai);
     }
-    public void deleteCategoryById(int id) {
+    public void deleteTheloaiById(Long id) {
         if (!categoryRepository.existsById(id)) {
-            throw new IllegalStateException("Category with ID " + id + " does no exist.");
+            throw new IllegalStateException("Category with ID " + id + " does not exist.");
         }
         categoryRepository.deleteById(id);
     }
